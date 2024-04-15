@@ -1,0 +1,37 @@
+using Patients.Api.Models.Shared;
+
+namespace Patients.Api.Middlewares;
+
+public class ExceptionHandlerMiddleware
+{
+    private readonly RequestDelegate _next;
+
+    public ExceptionHandlerMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        try
+        {
+            await _next(context);
+        }
+        catch (Exception e)
+        {
+            // here we can log exceptions
+            Console.WriteLine(e);
+            
+            var response = new ResponseBase { Result = ResultCode.ServerError };
+            await context.Response.WriteAsJsonAsync(response);
+        }
+    }
+}
+
+public static class ExceptionHandlerMiddlewareExtensions
+{
+    public static IApplicationBuilder UseCustomExceptionHandler(this IApplicationBuilder builder)
+    {
+        return builder.UseMiddleware<ExceptionHandlerMiddleware>();
+    }
+}
