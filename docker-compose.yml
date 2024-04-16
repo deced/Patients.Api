@@ -1,7 +1,5 @@
 ﻿services:
   mongodb:
-    ports:
-      - 27018:27017
     networks: 
       - api-network
     image: mongo
