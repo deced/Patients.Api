@@ -38,17 +38,11 @@ public class MongoRepository<TEntity> : IRepository<TEntity> where TEntity : Ent
     {
         return _collection.Find(x => x.Id == guid).FirstOrDefaultAsync()!;
     }
-
-    public Task<List<TEntity>> FilterByAsync(Expression<Func<TEntity, bool>> filterExpression,
+    
+    public Task<List<TEntity>> FilterByAsync(FilterDefinition<TEntity> filterDefinition,
         Expression<Func<TEntity, object>> sortOrder)
     {
-        return _collection.Find(filterExpression).SortBy(sortOrder).ToListAsync();
-    }
-
-    public Task<List<TEntity>> FilterByAsync(Expression<Func<TEntity, bool>> filterExpression,
-        Expression<Func<TEntity, object>> sortOrder, int skip, int limit)
-    {
-        return _collection.Find(filterExpression).SortBy(sortOrder).Skip(skip).Limit(limit).ToListAsync();
+        return _collection.Find(filterDefinition).SortBy(sortOrder).ToListAsync();
     }
 
     public Task UpdateOneAsync(TEntity entity)

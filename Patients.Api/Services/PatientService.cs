@@ -1,5 +1,7 @@
+using MongoDB.Driver;
 using Patients.Api.Data.Entities;
 using Patients.Api.Data.Repository;
+using Patients.Api.Helpers;
 using Patients.Api.Models.CreateManyPatients;
 using Patients.Api.Models.CreatePatient;
 using Patients.Api.Models.DeletePatient;
@@ -20,9 +22,28 @@ public class PatientService : IPatientService
         _repository = repository;
     }
 
-    public Task CreateMany(CreatePatientsRequest request)
+    public async Task<CreatePatientsResponse> CreateMany(CreatePatientsRequest request)
     {
-        throw new NotImplementedException();
+        var patients = new List<Patient>();
+
+        foreach (var patientModel in request.Items)
+        {
+            patients.Add(new Patient()
+            {
+                Active = patientModel.Active,
+                Gender = GetGender(patientModel.Gender),
+                Family = patientModel.Family,
+                Given = patientModel.Given ?? new List<string>(),
+                Use = patientModel.Use,
+                BirthDate = patientModel.BirthDate
+            });
+        }
+
+        await _repository.InsertManyAsync(patients);
+
+        var response = new CreatePatientsResponse();
+        response.Result = ResultCode.Success;
+        return response;
     }
 
     public async Task<CreatePatientResponse> Create(CreatePatientRequest request)
@@ -47,9 +68,73 @@ public class PatientService : IPatientService
         return response;
     }
 
-    public Task<FilterPatientsResponse> Filter(FilterPatientsRequest request)
+    public async Task<FilterPatientsResponse> Filter(FilterPatientsRequest request)
     {
-        throw new NotImplementedException();
+        request.BirthDate ??= Array.Empty<string>();
+        var filterBuilder = Builders<Patient>.Filter;
+        var filters = new List<FilterDefinition<Patient>>();
+
+        foreach (var dateFilter in request.BirthDate)
+        {
+            var filterType = dateFilter[..2];
+            var dateString = dateFilter[2..];
+            var dateRange = new DateRange(dateString);
+            if (filterType == "eq")
+            {
+                filters.Add(filterBuilder.And(
+                    filterBuilder.Gt(x => x.BirthDate, dateRange.Start),
+                    filterBuilder.Lt(x => x.BirthDate, dateRange.End)));
+            }
+            else if (filterType == "ne")
+            {
+                filters.Add(filterBuilder.Or(
+                    filterBuilder.Gt(x => x.BirthDate, dateRange.End),
+                    filterBuilder.Lt(x => x.BirthDate, dateRange.Start)));
+            }
+            else if(filterType == "lt")
+            {
+                filters.Add(filterBuilder.Lt(x => x.BirthDate, dateRange.Start));
+            }
+            else if (filterType == "gt")
+            {
+                filters.Add(filterBuilder.Gt(x => x.BirthDate, dateRange.Start));
+            }
+            else if(filterType == "ge")
+            {
+                filters.Add(filterBuilder.Gte(x => x.BirthDate, dateRange.Start));
+            }
+            else if(filterType == "le")
+            {
+                filters.Add(filterBuilder.Lte(x => x.BirthDate, dateRange.End));
+            }
+            else if(filterType == "sa")
+            {
+                filters.Add(filterBuilder.Gt(x => x.BirthDate, dateRange.End));
+            }
+            else if(filterType == "eb")
+            {
+                filters.Add(filterBuilder.Lt(x => x.BirthDate, dateRange.Start));
+            }
+            else if (filterType == "ap")
+            {
+                var start = dateRange.Start.AddDays(-14);
+                var end = dateRange.Start.AddDays(14);
+                
+                filters.Add(filterBuilder.And(
+                    filterBuilder.Gt(x => x.BirthDate, start),
+                    filterBuilder.Lt(x => x.BirthDate, end)));
+            }
+        }
+
+        var filter = filters.Any() ? filterBuilder.And(filters) : filterBuilder.Empty;
+        var patients = await _repository.FilterByAsync(filter, x => x.BirthDate);
+
+        var response = new FilterPatientsResponse
+        {
+            Items = patients.Select(x => new PatientModel(x)).ToList(),
+            Result = ResultCode.Success
+        };
+        return response;
     }
 
     public async Task<GetPatientByIdResponse> GetById(Guid guid)
@@ -87,6 +172,7 @@ public class PatientService : IPatientService
         patient.Family = request.Family;
         patient.Given = request.Given ?? new List<string>();
         patient.Use = request.Use;
+        patient.Gender = GetGender(request.Gender);
 
         await _repository.UpdateOneAsync(patient);
 

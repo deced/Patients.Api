@@ -9,10 +9,9 @@ namespace Patients.Api.Services.Interfaces;
 
 public interface IPatientService
 {
-    Task CreateMany(CreatePatientsRequest request);
+    Task<CreatePatientsResponse> CreateMany(CreatePatientsRequest request);
     Task<CreatePatientResponse> Create(CreatePatientRequest request);
     Task<FilterPatientsResponse> Filter(FilterPatientsRequest request);
-    
     Task<GetPatientByIdResponse> GetById(Guid guid);
     Task<UpdatePatientResponse> Update(UpdatePatientRequest request);
     Task<DeletePatientResponse> Delete(Guid guid);

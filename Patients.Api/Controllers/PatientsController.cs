@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Patients.Api.Models.CreateManyPatients;
 using Patients.Api.Models.CreatePatient;
 using Patients.Api.Models.DeletePatient;
 using Patients.Api.Models.FilterPatients;
@@ -19,47 +21,59 @@ public class PatientsController : Controller
     }
     
     [HttpPost]
-    public async Task<CreatePatientResponse> Create([FromBody] CreatePatientRequest request)
+    public async Task<IActionResult> Create([FromBody] CreatePatientRequest request)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        
         var response = await _patientService.Create(request);
-        return response;
+        return Json(response);
+    }
+
+    [HttpPost("create-many")]
+    public async Task<IActionResult> CreateMany([FromBody] CreatePatientsRequest request)
+    {
+        var response = await _patientService.CreateMany(request);
+        return Json(response);
     }
 
     [HttpGet]
-    public async Task<FilterPatientsResponse> Filter(
-        [FromQuery]DateTime date,
-        [FromQuery]long? pageSize, 
-        [FromQuery] long? page)
+    public async Task<IActionResult> Filter([FromQuery]FilterPatientsRequest request)
     {
-        var request = new FilterPatientsRequest()
+        if (!ModelState.IsValid)
         {
-            Date = date,
-            Page = page ?? 0,
-            PageSize = pageSize ?? 0
-        };
+            return BadRequest(ModelState);
+        }
         
         var response = await _patientService.Filter(request);
-        return response;
+        return Json(response);
     }
     
     [HttpGet("{patientId}")]
-    public async Task<GetPatientByIdResponse> GetById([FromRoute]Guid patientId)
+    public async Task<IActionResult> GetById([FromRoute]Guid patientId)
     {
         var response = await _patientService.GetById(patientId);
-        return response;
+        return Json(response);
     }
     
     [HttpPut]
-    public async Task<UpdatePatientResponse> Update([FromBody] UpdatePatientRequest request)
+    public async Task<IActionResult> Update([FromBody] UpdatePatientRequest request)
     {
+        if (ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+        
         var response = await _patientService.Update(request);
-        return response;
+        return Json(response);
     }
     
     [HttpDelete("{patientId}")]
-    public async Task<DeletePatientResponse> Delete([FromRoute] Guid patientId)
+    public async Task<IActionResult> Delete([FromRoute] Guid patientId)
     {
         var response = await _patientService.Delete(patientId);
-        return response;
+        return Json(response);
     }
 }

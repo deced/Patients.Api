@@ -21,9 +21,8 @@ public class ExceptionHandlerMiddleware
         {
             // here we can log exceptions
             Console.WriteLine(e);
-            
-            var response = new ResponseBase { Result = ResultCode.ServerError };
-            await context.Response.WriteAsJsonAsync(response);
+
+            context.Response.StatusCode = 500;
         }
     }
 }

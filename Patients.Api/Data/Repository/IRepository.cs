@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using MongoDB.Driver;
 using Patients.Api.Data.Entities;
 
 namespace Patients.Api.Data.Repository;
@@ -9,8 +10,7 @@ public interface IRepository<TEntity> where TEntity : EntityBase
     Task InsertManyAsync(ICollection<TEntity> entities);
 
     Task<TEntity?> GetByIdAsync(Guid guid);
-    Task<List<TEntity>> FilterByAsync(Expression<Func<TEntity, bool>> filterExpression, Expression<Func<TEntity, object>> sortOrder);
-    Task<List<TEntity>> FilterByAsync(Expression<Func<TEntity, bool>> filterExpression, Expression<Func<TEntity, object>> sortOrder, int skip, int take);
+    Task<List<TEntity>> FilterByAsync(FilterDefinition<TEntity> filterDefinition, Expression<Func<TEntity, object>> sortOrder);
 
     Task UpdateOneAsync(TEntity entity);
 
