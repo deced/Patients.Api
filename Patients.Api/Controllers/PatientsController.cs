@@ -85,7 +85,6 @@ public class PatientsController : Controller
     /// Retrieves patient by id
     /// </summary>
     /// <response code="200">Success</response>
-    /// <response code="400">Invalid filters</response>
     /// <response code="500">Server error</response>
     [HttpGet("{patientId}")]
     [ProducesResponseType(typeof(GetPatientByIdResponse), 200)]

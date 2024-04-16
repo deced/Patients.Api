@@ -20,7 +20,7 @@ public class ExceptionHandlerMiddleware
             // here we can log exceptions
             Console.WriteLine(e);
 
-            context.Response.StatusCode = 500;
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
         }
     }
 }
