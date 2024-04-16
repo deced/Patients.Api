@@ -160,7 +160,7 @@ public class PatientService : IPatientService
         };
     }
 
-    private FilterDefinition<Patient> GetFilter(string filterString)
+    private static FilterDefinition<Patient> GetFilter(string filterString)
     {
         var filter = Builders<Patient>.Filter;
         var filterType = filterString[..2];

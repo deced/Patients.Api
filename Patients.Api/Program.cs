@@ -7,6 +7,8 @@ using Patients.Api.Services.Interfaces;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<IPatientService, PatientService>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(MongoRepository<>));
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1",
@@ -20,8 +22,7 @@ builder.Services.AddSwaggerGen(c =>
     var filePath = Path.Combine(System.AppContext.BaseDirectory, "Patients.Api.xml");
     c.IncludeXmlComments(filePath);
 });
-builder.Services.AddScoped<IPatientService, PatientService>();
-builder.Services.AddScoped(typeof(IRepository<>), typeof(MongoRepository<>));
+
 var app = builder.Build();
 
 app.MapGet("/health-check", () => "ok");
