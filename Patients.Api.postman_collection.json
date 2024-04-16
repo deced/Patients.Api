@@ -13,7 +13,28 @@
 					"name": "Filter range",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "http://{{Host}}:{{Port}}/patients?DateFilters=gt2020&DateFilters=lt2024-5",
+							"protocol": "http",
+							"host": [
+								"{{Host}}"
+							],
+							"port": "{{Port}}",
+							"path": [
+								"patients"
+							],
+							"query": [
+								{
+									"key": "DateFilters",
+									"value": "gt2020"
+								},
+								{
+									"key": "DateFilters",
+									"value": "lt2024-5"
+								}
+							]
+						}
 					},
 					"response": []
 				},
@@ -46,7 +67,24 @@
 					"name": "Filter with month",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "http://{{Host}}:{{Port}}/patients?DateFilters=gt2002-9",
+							"protocol": "http",
+							"host": [
+								"{{Host}}"
+							],
+							"port": "{{Port}}",
+							"path": [
+								"patients"
+							],
+							"query": [
+								{
+									"key": "DateFilters",
+									"value": "gt2002-9"
+								}
+							]
+						}
 					},
 					"response": []
 				},
@@ -79,7 +117,24 @@
 					"name": "Filter with day",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "http://{{Host}}:{{Port}}/patients?DateFilters=gt2002-9-10",
+							"protocol": "http",
+							"host": [
+								"{{Host}}"
+							],
+							"port": "{{Port}}",
+							"path": [
+								"patients"
+							],
+							"query": [
+								{
+									"key": "DateFilters",
+									"value": "gt2002-9-10"
+								}
+							]
+						}
 					},
 					"response": []
 				},
@@ -87,7 +142,24 @@
 					"name": "Filter ne year",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "http://{{Host}}:{{Port}}/patients?DateFilters=ne2024",
+							"protocol": "http",
+							"host": [
+								"{{Host}}"
+							],
+							"port": "{{Port}}",
+							"path": [
+								"patients"
+							],
+							"query": [
+								{
+									"key": "DateFilters",
+									"value": "ne2024"
+								}
+							]
+						}
 					},
 					"response": []
 				}
@@ -97,7 +169,18 @@
 			"name": "Get All Patients",
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "http://{{Host}}:{{Port}}/patients",
+					"protocol": "http",
+					"host": [
+						"{{Host}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"patients"
+					]
+				}
 			},
 			"response": []
 		},
