@@ -1,25 +1,24 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using Patients.Api.Helpers;
 
 namespace Patients.Api.Models.FilterPatients;
 
 public class FilterPatientsRequest : IValidatableObject
 {
-    public string[]? BirthDate { get; set; }
+    public string[]? DateFilters { get; set; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        if (BirthDate == null)
+        if (DateFilters == null)
             return Enumerable.Empty<ValidationResult>();
         
         var availableFilters = new[] { "eq", "ne", "lt", "gt", "ge", "le", "sa", "eb", "ap" };
         var results = new List<ValidationResult>();
 
-        for (int i = 0; i < BirthDate.Length; i++)
+        for (int i = 0; i < DateFilters.Length; i++)
         {
-            var dateItem = BirthDate[i];
+            var dateItem = DateFilters[i];
 
             if (string.IsNullOrEmpty(dateItem))
             {
@@ -53,6 +52,6 @@ public class FilterPatientsRequest : IValidatableObject
 
         return results;
 
-        string[] GetParamName(int index) => new[] { $"{nameof(BirthDate)}[{index}]" };
+        string[] GetParamName(int index) => new[] { $"{nameof(DateFilters)}[{index}]" };
     }
 }

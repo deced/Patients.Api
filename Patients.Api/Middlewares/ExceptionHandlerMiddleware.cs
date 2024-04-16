@@ -1,5 +1,3 @@
-using Patients.Api.Models.Shared;
-
 namespace Patients.Api.Middlewares;
 
 public class ExceptionHandlerMiddleware

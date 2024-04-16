@@ -12,7 +12,7 @@ public interface IPatientService
     Task<CreatePatientsResponse> CreateMany(CreatePatientsRequest request);
     Task<CreatePatientResponse> Create(CreatePatientRequest request);
     Task<FilterPatientsResponse> Filter(FilterPatientsRequest request);
-    Task<GetPatientByIdResponse> GetById(Guid guid);
+    Task<GetPatientByIdResponse> GetById(Guid patientId);
     Task<UpdatePatientResponse> Update(UpdatePatientRequest request);
-    Task<DeletePatientResponse> Delete(Guid guid);
+    Task<DeletePatientResponse> Delete(Guid patientId);
 }

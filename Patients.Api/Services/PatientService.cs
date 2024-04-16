@@ -1,7 +1,7 @@
 using MongoDB.Driver;
 using Patients.Api.Data.Entities;
 using Patients.Api.Data.Repository;
-using Patients.Api.Helpers;
+using Patients.Api.Models;
 using Patients.Api.Models.CreateManyPatients;
 using Patients.Api.Models.CreatePatient;
 using Patients.Api.Models.DeletePatient;
@@ -30,6 +30,7 @@ public class PatientService : IPatientService
         {
             patients.Add(new Patient()
             {
+                Id = patientModel.Guid,
                 Active = patientModel.Active,
                 Gender = GetGender(patientModel.Gender),
                 Family = patientModel.Family,
@@ -70,63 +71,10 @@ public class PatientService : IPatientService
 
     public async Task<FilterPatientsResponse> Filter(FilterPatientsRequest request)
     {
-        request.BirthDate ??= Array.Empty<string>();
-        var filterBuilder = Builders<Patient>.Filter;
-        var filters = new List<FilterDefinition<Patient>>();
+        request.DateFilters ??= Array.Empty<string>();
+        var filters = request.DateFilters.Select(GetFilter).ToList();
 
-        foreach (var dateFilter in request.BirthDate)
-        {
-            var filterType = dateFilter[..2];
-            var dateString = dateFilter[2..];
-            var dateRange = new DateRange(dateString);
-            if (filterType == "eq")
-            {
-                filters.Add(filterBuilder.And(
-                    filterBuilder.Gt(x => x.BirthDate, dateRange.Start),
-                    filterBuilder.Lt(x => x.BirthDate, dateRange.End)));
-            }
-            else if (filterType == "ne")
-            {
-                filters.Add(filterBuilder.Or(
-                    filterBuilder.Gt(x => x.BirthDate, dateRange.End),
-                    filterBuilder.Lt(x => x.BirthDate, dateRange.Start)));
-            }
-            else if(filterType == "lt")
-            {
-                filters.Add(filterBuilder.Lt(x => x.BirthDate, dateRange.Start));
-            }
-            else if (filterType == "gt")
-            {
-                filters.Add(filterBuilder.Gt(x => x.BirthDate, dateRange.Start));
-            }
-            else if(filterType == "ge")
-            {
-                filters.Add(filterBuilder.Gte(x => x.BirthDate, dateRange.Start));
-            }
-            else if(filterType == "le")
-            {
-                filters.Add(filterBuilder.Lte(x => x.BirthDate, dateRange.End));
-            }
-            else if(filterType == "sa")
-            {
-                filters.Add(filterBuilder.Gt(x => x.BirthDate, dateRange.End));
-            }
-            else if(filterType == "eb")
-            {
-                filters.Add(filterBuilder.Lt(x => x.BirthDate, dateRange.Start));
-            }
-            else if (filterType == "ap")
-            {
-                var start = dateRange.Start.AddDays(-14);
-                var end = dateRange.Start.AddDays(14);
-                
-                filters.Add(filterBuilder.And(
-                    filterBuilder.Gt(x => x.BirthDate, start),
-                    filterBuilder.Lt(x => x.BirthDate, end)));
-            }
-        }
-
-        var filter = filters.Any() ? filterBuilder.And(filters) : filterBuilder.Empty;
+        var filter = filters.Any() ? Builders<Patient>.Filter.And(filters) : Builders<Patient>.Filter.Empty;
         var patients = await _repository.FilterByAsync(filter, x => x.BirthDate);
 
         var response = new FilterPatientsResponse
@@ -137,9 +85,9 @@ public class PatientService : IPatientService
         return response;
     }
 
-    public async Task<GetPatientByIdResponse> GetById(Guid guid)
+    public async Task<GetPatientByIdResponse> GetById(Guid patientId)
     {
-        var patient = await _repository.GetByIdAsync(guid);
+        var patient = await _repository.GetByIdAsync(patientId);
 
         var response = new GetPatientByIdResponse();
         
@@ -181,9 +129,9 @@ public class PatientService : IPatientService
         return response;
     }
 
-    public async Task<DeletePatientResponse> Delete(Guid guid)
+    public async Task<DeletePatientResponse> Delete(Guid patientId)
     {
-        var deletedPatient = await _repository.DeleteOneByIdAsync(guid);
+        var deletedPatient = await _repository.DeleteOneByIdAsync(patientId);
         var response = new DeletePatientResponse();
         
         if (deletedPatient == null)
@@ -211,4 +159,69 @@ public class PatientService : IPatientService
             _ => Gender.Unknown
         };
     }
+
+    private FilterDefinition<Patient> GetFilter(string filterString)
+    {
+        var filter = Builders<Patient>.Filter;
+        var filterType = filterString[..2];
+        var dateString = filterString[2..];
+        var dateRange = new DateRange(dateString);
+        
+        if (filterType == "eq")
+        {
+            return filter.And(
+                filter.Gt(x => x.BirthDate, dateRange.Start),
+                filter.Lt(x => x.BirthDate, dateRange.End));
+        }
+        
+        if (filterType == "ne")
+        {
+            return filter.Or(
+                filter.Gt(x => x.BirthDate, dateRange.End),
+                filter.Lt(x => x.BirthDate, dateRange.Start));
+        }
+        
+        if(filterType == "lt")
+        {
+            return filter.Lt(x => x.BirthDate, dateRange.Start);   
+        }
+        
+        if (filterType == "gt")
+        {
+            return filter.Gt(x => x.BirthDate, dateRange.End);
+        }
+        
+        if(filterType == "ge")
+        {
+            return filter.Gte(x => x.BirthDate, dateRange.Start);
+        }
+        
+        if(filterType == "le")
+        {
+            return filter.Lt(x => x.BirthDate, dateRange.Start);
+        }
+        
+        if(filterType == "sa")
+        {
+            return filter.Gt(x => x.BirthDate, dateRange.End);
+        }
+        
+        if(filterType == "eb")
+        {
+            return filter.Lt(x => x.BirthDate, dateRange.Start);
+        }
+        
+        if (filterType == "ap")
+        {
+            var start = dateRange.Start.AddDays(-14);
+            var end = dateRange.Start.AddDays(14);
+                
+            return filter.And(
+                filter.Gt(x => x.BirthDate, start),
+                filter.Lt(x => x.BirthDate, end));
+        }
+
+        return filter.Empty;
+    }
+    
 }

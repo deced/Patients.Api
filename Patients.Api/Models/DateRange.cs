@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace Patients.Api.Helpers;
+namespace Patients.Api.Models;
 
 public class DateRange
 {

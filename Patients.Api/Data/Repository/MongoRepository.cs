@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using MongoDB.Driver;
 using Patients.Api.Attributes;
+using Patients.Api.Configuration;
 using Patients.Api.Data.Entities;
 
 namespace Patients.Api.Data.Repository;
@@ -10,13 +11,13 @@ public class MongoRepository<TEntity> : IRepository<TEntity> where TEntity : Ent
 {
     private readonly IMongoCollection<TEntity> _collection;
     
-    public MongoRepository(IConfiguration configuration)
+    public MongoRepository()
     {
-        var connectionString = configuration["ConnectionString"];
-        var databaseName = configuration["DatabaseName"];
+        var connectionString = AppConfiguration.ConnectionString;
+        var databaseName = AppConfiguration.DatabaseName;
         var collectionName = GetCollectionName<TEntity>();
-        var database = new MongoClient(connectionString).GetDatabase(databaseName);
         
+        var database = new MongoClient(connectionString).GetDatabase(databaseName);
         _collection = database.GetCollection<TEntity>(collectionName);
 
     }

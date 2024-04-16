@@ -1,0 +1,236 @@
+{
+	"info": {
+		"_postman_id": "6530e60e-5361-4a95-b0b7-2008fa7564f8",
+		"name": "Patients.Api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29280420"
+	},
+	"item": [
+		{
+			"name": "Filters",
+			"item": [
+				{
+					"name": "Filter range",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Filter eq year",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{Host}}:{{Port}}/patients?DateFilters=eq2000",
+							"protocol": "http",
+							"host": [
+								"{{Host}}"
+							],
+							"port": "{{Port}}",
+							"path": [
+								"patients"
+							],
+							"query": [
+								{
+									"key": "DateFilters",
+									"value": "eq2000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter with month",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Filter with time",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{Host}}:{{Port}}/patients?DateFilters=le2000-03-27T15:48",
+							"protocol": "http",
+							"host": [
+								"{{Host}}"
+							],
+							"port": "{{Port}}",
+							"path": [
+								"patients"
+							],
+							"query": [
+								{
+									"key": "DateFilters",
+									"value": "le2000-03-27T15:48"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter with day",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Filter ne year",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Get All Patients",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Get Patient By Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{Host}}:{{Port}}/patients/0d293ae8-8a93-40ad-b7e3-4998f1926962",
+					"protocol": "http",
+					"host": [
+						"{{Host}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"patients",
+						"0d293ae8-8a93-40ad-b7e3-4998f1926962"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create patient",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"family\": \"Ivanov\",\n  \"birthDate\": \"2024-04-16T07:56:39.735Z\",\n  \"use\": \"official\",\n  \"given\": [\n    \"Ivan\",\n    \"Ivanovich\"\n  ],\n  \"active\": true,\n  \"gender\": \"male\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{Host}}:{{Port}}/patients",
+					"protocol": "http",
+					"host": [
+						"{{Host}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"patients"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update patient",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"guid\": \"ff84b262-e615-4613-8d93-ea2ca723a39b\",\n  \"family\": \"Ivanov1\",\n  \"birthDate\": \"2024-04-16T08:16:47.816Z\",\n  \"use\": \"official\",\n  \"given\": [\n    \"Ivan1\",\n    \"Ivanovich1\"\n  ],\n  \"active\": true,\n  \"gender\": \"unknown\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{Host}}:{{Port}}/patients/",
+					"protocol": "http",
+					"host": [
+						"{{Host}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"patients",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete patient",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{Host}}:{{Port}}/patients/cb0395bd-2abd-4454-bc18-132394713883",
+					"protocol": "http",
+					"host": [
+						"{{Host}}"
+					],
+					"port": "{{Port}}",
+					"path": [
+						"patients",
+						"cb0395bd-2abd-4454-bc18-132394713883"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "Host",
+			"value": "localhost",
+			"type": "string"
+		},
+		{
+			"key": "Port",
+			"value": "5001",
+			"type": "string"
+		}
+	]
+}
